@@ -1,11 +1,11 @@
 % run_me
 clear all
-Figure6CD = 0;
-Figure6EF = 0;% run this
-Figure6G = 0;
+Figure6CD = 1;
+Figure6EF = 1;% run this
+Figure6G = 1;
 
 run_rescale_data = 0;
-run_sampling = 1;
+run_sampling = 0;
 
 
 data_save_file_path = './raw_data/';%_fay_parameter/';
