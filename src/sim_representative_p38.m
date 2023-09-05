@@ -1,0 +1,4 @@
+
+p = [0.516497639	0.031237844	0.301366072	0.012683641	0.000114767	0.012320076	5.241056524	0.299043472	1.03505377	0.103901535	0.624002416];
+paraset_name = 'Figure6_representative';%'New_initial';
+simulation_p38_paraset(p,paraset_name,fig_save_path)
