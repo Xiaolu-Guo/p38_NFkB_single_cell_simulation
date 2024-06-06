@@ -1,0 +1,139 @@
+% run_me
+clear all
+Figure6CD = 0;
+Figure6EF = 0;% run this
+Figure6G = 0;
+
+run_rescale_data = 0;
+run_sampling = 0;
+
+
+data_save_file_path = './raw_data/';%_fay_parameter/';
+fig_save_path = './SubFigures2023/';
+
+addpath('./src/')
+addpath(data_save_file_path)
+addpath(fig_save_path)
+
+if Figure6F
+    
+if 0
+    draw_p38_NFkB_denoise_3model_sim_int_0321(fig_save_path)
+end
+
+if 0 % features update figure 6F
+    draw_p38_NFkB_denoise_3model_sim_features_Figure6F_0311(fig_save_path)   
+end
+
+if 0   
+    draw_p38_NFkB_denoise_3model_sim_features_0228(fig_save_path)
+    %0227
+    %draw_p38_NFkB_denoise_features_0226(fig_save_path)
+end
+
+
+%% run sensitivity analysis for revision
+run_sens_for_revision = 0;
+if run_sens_for_revision
+    monolix_data_save_file_path = '../SAEM_proj_2023/';
+    input_paras.Num_sample = 10;
+    
+    % TNF 2, LPS 3, CpG 4, PolyIC 5, Pam 6
+    input_paras.proj_num_vec = {[3]};
+    input_paras.Num_sample = [21];%in total 21 parameters
+    
+    input_paras.proj_ligand_vec = {{'LPS'}};
+    input_paras.proj_dose_str_vec = {{'100ng/mL'}};
+    input_paras.proj_dose_val_vec = {{100}};
+    
+    
+    cal_codon =1;
+    MKK4_fold_vec = [10.^(linspace(-1,1,21));
+        ones(1,21)];
+    MKK6_fold_vec = MKK4_fold_vec;
+    p38_fold_vec = MKK4_fold_vec;
+    sigma_string_vec = {'Changed','Fixed'};
+    for i_MKK4 = 1:size(MKK4_fold_vec,1)
+        for i_MKK6 = 1:size(MKK6_fold_vec,1)
+            for i_p38 = 1:size(p38_fold_vec,1)
+                
+                p38_model_fold.MKK4 = MKK4_fold_vec(i_MKK4,:);
+                p38_model_fold.MKK6= MKK6_fold_vec(i_MKK6,:);
+                p38_model_fold.p38= p38_fold_vec(i_p38,:);
+                
+                save_metric_name = strcat( 'Sim_p38_sens_MKK4S',sigma_string_vec{i_MKK4},...
+                    '_MKK6S',sigma_string_vec{i_MKK6},...
+                    '_p38S',sigma_string_vec{i_p38},...
+                    '_r2.mat');
+                para_sens_2023_12_forrevision(p38_model_fold,data_save_file_path,input_paras,save_metric_name)
+            end
+        end
+    end
+end
+
+%% draw sensitivity analysis
+if 0 % draw the curves
+    draw_sens_p38()
+end
+
+if 0 % draw the heatmap
+    draw_sens_withnoise()
+end
+
+end
+
+if Figure6CD
+    %sim_example_
+    % sim_example_p38
+    sim_representative_p38
+end
+
+if Figure6G
+    cal_plot_corr_NFkB_p38
+end
+
+if run_rescale_data
+    rescale_data
+end
+
+if Figure6EF
+    draw_heatmap_experiments % to be finished
+    draw_traj_heatmap_diff_order_2023
+end
+
+
+if run_sampling
+    input_paras.Num_sample = 10;
+    
+    % TNF 2, LPS 3, CpG 4, PolyIC 5, Pam 6
+    input_paras.proj_num_vec = {[2];
+        [3];
+        [4];
+        [6]};
+    input_paras.Num_sample = [500;
+        500;
+        500;
+        500];
+    
+    input_paras.proj_ligand_vec = {{'TNF'};
+        {'LPS'};
+        {'CpG'};
+        {'Pam3CSK'}};
+    input_paras.proj_dose_str_vec = {{'100ng/mL'};
+        {'100ng/mL'};
+        {'1000nM'};
+        {'100ng/mL'}};
+    input_paras.proj_dose_val_vec = {{100};
+        {100};
+        {1000};
+        {100}};
+
+    
+    cal_codon =1;
+    
+    save_metric_name = 'Sim_NFKBfitting_alldose_p38_sampling_r2.mat';%r2
+    % data_save_file_path
+    para_sample_fitting_sim_sti_doses_var_2023(data_save_file_path,input_paras,cal_codon,save_metric_name,'alldose')
+    
+end
+
